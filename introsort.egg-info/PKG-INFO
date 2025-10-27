@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: introsort
+Version: 0.1.0
+Summary: Hybrid Introsort in Python
+Author: Abolfazl Yousefi
+License-File: LICENSE
+Dynamic: author
+Dynamic: license-file
+Dynamic: summary
