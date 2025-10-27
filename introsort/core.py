@@ -1,60 +1,76 @@
+import math
+
+def introsort(array, low, high, depthlimit=None):
+    length = high - low + 1
+
+    if length <= 1:
+        return
+    
+    THRESHOLD = 16
+    if depthlimit is None:
+        depthlimit = 2 * int(math.log2(length))
+
+    if length <= THRESHOLD:
+        insertionSort(array, low, high)
+    
+    elif depthlimit == 0:
+        heapSort(array, low, high)
+        
+    else:
+        if low >= high:
+            return
+        pi = partition(array, low, high)
+        introsort(array, low, pi - 1, depthlimit - 1)
+        introsort(array, pi + 1, high, depthlimit - 1)
+
+def swap(array, i, j):
+    array[i], array[j] = array[j], array[i]
+
+def insertionSort(array, low, high):
+    for j in range(low + 1, high + 1):
+        key = array[j]
+        i = j - 1
+        while i >= low and array[i] > key:
+            array[i + 1] = array[i]
+            i -= 1
+        array[i + 1] = key
 
 
-THRESHOLD = 16
-
-def insertion_sort(array, low, high):
-    pass
-
-def heapify(array, n, i):
+def heapify(array, low, high, i):
     largest = i
-
-    l = 2 * i + 1
-
-    r = 2 * i + 2
-
-    if l < n and array[l] > array[n]:
+    l = 2 * (i - low) + 1 + low
+    r = 2 * (i - low) + 2 + low
+    if l <= high and array[l] > array[largest]:
         largest = l
-    if r < n and array[r] > array[n]:
+    if r <= high and array[r] > array[largest]:
         largest = r
 
     if largest != i:
-        array[i], array[largest] = array[largest], array[i]
+        swap(array, i, largest)
+        heapify(array, low, high, largest)
+
+
+def heapSort(array, low, high): 
+    for i in range(low + (high - low) // 2, low - 1, -1):
+        heapify(array, low, high, i)
     
-def heapsort(array):
-    n = len(array)
-
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(array, n, i)
-    
-    for i in range(n - 1, 0, -1):
-        array[i], array[0] = array[0], array[i]
-
-        heapify(array, i, 0)
-
-def quickSort(array, low, high):
-    pi = partition(array, low, high)
-    quickSort(array, low, pi - 1)
-    quickSort(array, pi + 1, high)
+    for i in range(high, low, -1):
+        swap(array, low, i)
+        heapify(array, low, i - 1, low)
 
 def partition(array, low, high):
     pivot = array[high]
-
     i = low - 1
     for j in range(low, high):
         if array[j] <= pivot:
-            array[i], array[j] = array[j], array[i]
             i += 1
-    array[i + 1], array[high] = array[high], array[i + 1]
-    return i + 1
+            swap(array, i, j)
+    i += 1
+    swap(array, i, high)
+    return i
 
-def introsort(array, low, high, maxdepth):
-    length = high - low
+array = [50, 16, 20, 0, 2, 7]
 
-    if length <= THRESHOLD:
-        insertion_sort(array, low, high)
-        return
-    
-    if maxdepth == 0:
-        heapsort(array, low, high)
-        return
+introsort(array, 0,5)
 
+print(array)
